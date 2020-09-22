@@ -1,0 +1,18 @@
+---
+- gather_facts: false
+  name: Setup RHEL6
+  hosts: rhel6
+  tasks:
+    - name: Subscribe container
+      redhat_subscription:
+        auto_attach: true
+        force_register: true
+        password: "{{ lookup('env','REDHAT_REGISTRY_SERVICE_ACCOUNT_PASSWORD') }}"
+        username: "{{ lookup('env','REDHAT_REGISTRY_SERVICE_ACCOUNT_USERNAME') }}"
+
+    - name: Install packages
+      yum:
+        name:
+          - sudo
+          - tar
+        state: present
