@@ -1,1 +1,27 @@
 ---
+- name: Create groups
+  group:
+    name: "{{ item.name }}"
+    gid: "{{ item.gid }}"
+  loop:
+    - name: "image.deploy"
+      gid: 9576
+    - name: "build-imagedeploy"
+      gid: 2022
+
+- name: Create user
+  user:
+    name: image.deploy
+    groups: image.deploy,build-imagedeploy
+    group: image.deploy
+    shell: /bin/bash
+    uid: 9576
+    comment: "Build Team Image Deploy Service Account"
+
+- name: Add authorized_keys
+  authorized_key:
+    user: image.deploy
+    key: "{{ item }}"
+  with_file:
+    - public_keys/github_actions_rsa.pub
+    - public_keys/image-deploy.pub
